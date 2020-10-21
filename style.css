@@ -1,0 +1,134 @@
+body {
+  width: 800px;
+}
+
+table {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+  font-size: .8em;
+  margin-bottom: 200px;
+  table-layout: fixed;
+}
+
+table.legend-table {
+    margin-bottom: 20px;
+    width: auto;
+}
+
+table.legend-table td {
+    min-width: 20px;
+    border: 1px solid white;
+}
+
+table td, table th {
+  border: 1px solid #ddd;
+  padding: 3px;
+  background-clip: padding-box;
+}
+
+table th.first-th {
+  width: 20%;
+}
+
+table th.country-th {
+  padding-left: 1px;
+  padding-right: 1px;
+  width: 1.5%;
+  vertical-align: bottom;
+}
+
+table th.country-th span {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  padding-bottom: 5px;
+}
+
+/*table tr:nth-child(even){background-color: #f2f2f2;} */
+
+table tr:hover td.category-name {
+  background-color: #e5e5e5;
+}
+
+table th {
+  padding-top: 6px;
+  padding-bottom: 6px;
+  background-color: #f8f8f8;
+  border-bottom: 2px solid #888;
+  position: sticky;
+  top: 0px;
+  z-index: 999;
+/*  color: white;*/
+}
+
+table td.xls-style-19,
+table td.xls-style-27,
+table td.xls-style-28 {
+  /* green */
+  background-color: #70ad47;
+}
+
+table td.xls-style-21,
+table td.xls-style-29 {
+  /* light green */
+  background-color: #c6e0b4;
+}
+
+table td.xls-style-22,
+table td.xls-style-25 {
+  /* yellow */
+  background-color: #ffc000;
+}
+
+table td.xls-style-23 {
+  /* light yellow */
+  background-color: #ffe699;
+}
+
+table td.xls-style-20,
+table td.xls-style-24,
+table td.xls-style-26,
+table td.xls-style-30 {
+  background-color: #fff;
+}
+
+
+
+
+.tooltip {
+  cursor: pointer;
+  text-decoration:none;
+  position:relative;
+}
+
+.tooltip span {
+  display:none;
+  border-radius:6px;
+  color:black;
+  background:white;
+}
+
+table td.tooltip:hover {
+  border: 2px solid #555;
+}
+
+.tooltip:hover span {
+  display:block;
+  position:absolute;
+  top:4px;
+  left:-245px;
+  z-index:1000;
+  width:225px;
+  min-height:20px;
+  border:1px solid black;
+  margin:8px;
+  overflow:hidden;
+  padding:8px;
+  box-shadow: 0 1px 7px rgba(0, 0, 0, 0.2);
+}
+
+.tooltip:hover span p {
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
