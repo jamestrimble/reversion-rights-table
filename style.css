@@ -25,11 +25,17 @@ table td, table th {
   border: 1px solid #ddd;
   padding: 3px;
   background-clip: padding-box;
-  white-space: nowrap;
+}
+
+table.main-table td.category-name {
+  padding-top: 1px;
+  padding-bottom: 1px;
+  height: 24px;
+  line-height: 109%;
 }
 
 table th.first-th {
-  width: 33%;
+  width: 20%;
 }
 
 table th.country-th {
@@ -117,16 +123,15 @@ table td.tooltip:hover {
   display:block;
   position:absolute;
   top:4px;
-  left:-320px;
+  left:-245px;
   z-index:1000;
-  width:300px;
+  width:225px;
   min-height:20px;
   border:1px solid black;
   margin:8px;
   overflow:hidden;
   padding:8px;
   box-shadow: 0 1px 7px rgba(0, 0, 0, 0.2);
-  white-space: normal;
 }
 
 .tooltip:hover span p {
