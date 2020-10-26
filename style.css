@@ -138,7 +138,7 @@ table td.tooltip:hover {
 }
 
 .first-in-section {
-  border-top: 2px dotted #999;
+  border-top: 2px dotted rgba(0,0,0,.27);
 }
 
 td.row-section-1 {
