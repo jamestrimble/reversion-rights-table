@@ -22,7 +22,7 @@ table.legend-table td {
 }
 
 table td, table th {
-  border: 1px solid #ddd;
+  border: 1px solid rgba(127,127,127,.24);
   padding: 3px;
   background-clip: padding-box;
 }
