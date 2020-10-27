@@ -6162,18 +6162,27 @@ document.addEventListener("DOMContentLoaded", function(e) {
     }
 
     ul.rr-category-ul {
+      font-weight: bold;
       list-style-type: none;
       font-size: 1.2em;
       color: #111;
     }
 
     ul.rr-option-ul {
+      font-weight: normal;
       list-style-type: none;
-      font-size: .9em;
-      color: #333;
+      display: none;
       margin-left: 1.5em;
       padding-left: 0;
-      display: none;
+    }
+
+    .rr-option {
+      font-size: .9em;
+      color: #333;
+    }
+
+    .rr-option:hover {
+      color: #338;
     }
 
     li.active-option {
@@ -6185,8 +6194,12 @@ document.addEventListener("DOMContentLoaded", function(e) {
       cursor: pointer;
     }
 
+    .caret:hover {
+      color: #338;
+    }
+
     .caret::before {
-      content: "\25B6";
+      content: "\25B8";
       color: black;
       display: inline-block;
       margin-right: 6px;
