@@ -5999,7 +5999,8 @@ var colours = ['rgb(233,233,233)', '#70ad47', '#c6e0b4', '#ffc000', '#ffe699'];
 
 function ready() {
     var mouseOver = function(d) {
-        if (!((d.properties || {}).name || "") in revRightsData.countries) return
+        if (!(d.properties.name in revRightsData.countries))
+            return;
         d3.select("#countryTooltip").html(d.properties.name)
         var pData = [];
         if (d.properties.name in revRightsData.countries &&
@@ -6008,9 +6009,7 @@ function ready() {
         }
         var p = d3.select("#countryComment").selectAll('p')
             .data(pData);
-        console.log(p.size());
         p.enter().append('p').html(d => d);
-        console.log(p.size(), pData);
         p.html(d => d);
         p.exit().remove();
 
@@ -6033,7 +6032,8 @@ function ready() {
     }
 
     var mouseLeave = function(d) {
-        if (!((d.properties || {}).name || "") in revRightsData.countries) return
+        if (!(d.properties.name in revRightsData.countries))
+            return;
 
         d3.selectAll(".Country")
             .transition()
@@ -6100,6 +6100,8 @@ function ready() {
 	.attr('class', 'caret')
         .text(d => capitalizeFirstLetter(d.section))
 	.on('click', function(d) {
+	    d3.selectAll('.caret-down').classed('caret-down', false);
+	    d3.selectAll('.rr-option-ul.active').classed('active', false);
 	    var ul = d3.select(this.parentNode).select('.rr-option-ul');
 	    ul.classed('active', !ul.classed('active'));
             d3.select(this).classed('caret-down', !d3.select(this).classed('caret-down'));
