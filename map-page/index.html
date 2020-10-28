@@ -5989,8 +5989,6 @@ var svg = d3.select("#d3-map"),
     width = +svg.attr("width"),
     height = +svg.attr("height");
 
-//svg.append('defs').html('<linearGradient id="opacity_gradient"><stop offset="0%" style="stop-color: #fff; stop-opacity: 0"/><stop offset="3%" style="stop-color: #fff; stop-opacity: 1"/><stop offset="100%" style="stop-color: #fff; stop-opacity: 1"/></linearGradient>'); 
-
 // Map and projection
 var path = d3.geoPath();
 var projection = d3.geoMercator()
@@ -6029,7 +6027,7 @@ function ready() {
         d3.selectAll(".Country")
             .transition()
             .duration(fadeDuration)
-            .style("opacity", .6)
+            .style("opacity", .64)
         d3.select(this)
             .transition()
             .duration(fadeDuration)
@@ -6067,21 +6065,14 @@ function ready() {
         .enter()
         .append("path");
 
-//    svg.append('rect')
-//        .attr('x', width * .65)
-//        .attr('y', 0)
-//        .attr('width', width * .35)
-//        .attr('height', height)
-//        .style('fill', 'url(#opacity_gradient)');
-
     // draw each country
     countryPaths
         .attr("d", d3.geoPath()
             .projection(projection)
         )
-        // set the color of each country
-        .attr("fill", d =>
-            ((d.properties || {}).name || "") in revRightsData.countries ? "rgb(203,203,203)" : "white")
+//        // set the color of each country
+//        .attr("fill", d =>
+//            ((d.properties || {}).name || "") in revRightsData.countries ? "rgb(203,203,203)" : "white")
         .style("stroke", "transparent")
         .attr("class", function(d){ return "Country" } )
         .style("cursor", function(d){
@@ -6097,55 +6088,65 @@ function ready() {
         .on("mouseleave", mouseLeave )
         .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
 
-    var options = d3.select('#d3-options')
+    var categories_ul = d3.select('#d3-options')
         .append('ul')
 	.attr('class', 'rr-category-ul');
 
-    var categories = options
+    var categories = categories_ul
         .selectAll('.rr-category')
         .data(revRightsData.categories)
         .enter()
         .append('li')
         .attr('class', 'rr-category');
 
-    categories
+    var categoryClickCallback = function(d) {
+        var isDown = d3.select(this).classed('caret-down');
+        d3.selectAll('.caret-down').classed('caret-down', false);
+        d3.selectAll('.rr-option-ul.active').classed('active', false);
+        if (!isDown) {
+            var ul = d3.select(this.parentNode).select('.rr-option-ul');
+            ul.classed('active', true);
+            d3.select(this).classed('caret-down', true);
+        }
+    };
+
+    var categorySpans = categories
         .append('span')
 	.attr('class', 'caret')
+        .classed('caret-down', function(d, i) {return i==0;})
         .text(d => capitalizeFirstLetter(d.section))
-	.on('click', function(d) {
-            var isDown = d3.select(this).classed('caret-down');
-	    d3.selectAll('.caret-down').classed('caret-down', false);
-	    d3.selectAll('.rr-option-ul.active').classed('active', false);
-            if (!isDown) {
-                var ul = d3.select(this.parentNode).select('.rr-option-ul');
-                ul.classed('active', true);
-                d3.select(this).classed('caret-down', true);
-            }
-	});
+	.on('click', categoryClickCallback);
 
-    categories
+    var showChosenOption = function(d) {
+        d3.selectAll('.rr-option').classed('active-option', false);
+        d3.select(this).classed('active-option', true);
+        countryPaths.attr('fill', function(d2) {
+            rrSelectedOption = d.full_name;
+            var country_name = d2.properties.name;
+            if (country_name in revRightsData.countries) {
+                if (d.full_name in revRightsData.countries[country_name]) {
+                    return colours[revRightsData.countries[country_name][d.full_name].status];
+                }
+            }
+            return '#fff'
+        });
+    }
+
+    var options = categories
         .append('ul')
 	.attr('class', 'rr-option-ul')
+        .classed('active', function(d, i) {return i==0;})
         .selectAll('li.rr-option')
         .data(d => d.vals)
         .enter()
         .append('li')
         .attr('class', 'rr-option')
         .text(d => capitalizeFirstLetter(d.short_name))
-        .on('click', function(d) {
-                d3.selectAll('.rr-option').classed('active-option', false);
-                d3.select(this).classed('active-option', true);
-                countryPaths.attr('fill', function(d2) {
-                    rrSelectedOption = d.full_name;
-                    var country_name = d2.properties.name;
-                    if (country_name in revRightsData.countries) {
-                        if (d.full_name in revRightsData.countries[country_name]) {
-                            return colours[revRightsData.countries[country_name][d.full_name].status];
-                        }
-                    }
-                    return '#fff'
-                })
-            });
+        .on('click', showChosenOption);
+
+    options
+        .filter(function(d) {return d.full_name=='general: non-use or insufficient use'})
+        .each(showChosenOption);
 }
 
 document.addEventListener("DOMContentLoaded", function(e) {
@@ -6163,11 +6164,12 @@ document.addEventListener("DOMContentLoaded", function(e) {
     .tooltip {
         background: white;
         padding: .5em;
-        border-radius: 3%;
+        border-radius: 3px;
         border: 1px solid black;
         color: black;
         opacity: 1;
         max-width: 260px;
+        box-shadow: 0 1px 7px rgba(0, 0, 0, 0.2);
     }
 
     #countryTooltip {
@@ -6185,7 +6187,7 @@ document.addEventListener("DOMContentLoaded", function(e) {
       font-weight: bold;
       list-style-type: none;
       font-size: 1.2em;
-      color: #444;
+      color: #555;
       border-bottom: 1px solid #eee;
       padding: 0;
     }
@@ -6207,7 +6209,7 @@ document.addEventListener("DOMContentLoaded", function(e) {
 
     .rr-option {
       font-size: .9em;
-      color: #444;
+      color: #555;
       padding-top: 3px;
       padding-bottom: 3px;
     }
@@ -6231,7 +6233,7 @@ document.addEventListener("DOMContentLoaded", function(e) {
 
     .caret::before {
       content: "+";
-      color: #444;
+      color: #555;
       display: inline-block;
       margin-right: 6px;
     }
