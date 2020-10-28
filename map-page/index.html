@@ -10,14 +10,16 @@
 	<body>
 
 <!-- wp:html -->
-<table class="legend-table">
-<tr><td class="xls-style-19"></td><td>Currently binding provision</td>
-<tr><td class="xls-style-21"></td><td>Currently binding provision, concerns only certain types of agreements</td>
-<tr><td class="xls-style-22"></td><td>Historical provision</td>
-<tr><td class="xls-style-23"></td><td>Historical provision, concerns only certain types of agreements</td>
-<tr><td class="xls-style-0"></td><td>No provision</td>
-</table>
-<svg id="d3-map" width="800" height="460"></svg>
+<div id="map-div">
+    <svg id="d3-map" width="600" height="460"></svg>
+    <table class="legend-table">
+    <tr><td class="xls-style-19"></td><td>Currently binding provision</td>
+    <tr><td class="xls-style-21"></td><td>Currently binding provision, concerns only certain types of agreements</td>
+    <tr><td class="xls-style-22"></td><td>Historical provision</td>
+    <tr><td class="xls-style-23"></td><td>Historical provision, concerns only certain types of agreements</td>
+    <tr><td class="xls-style-0"></td><td>No provision</td>
+    </table>
+</div>
 <div id="d3-options"></div>
 <!-- /wp:html -->
 
@@ -5987,17 +5989,21 @@ var svg = d3.select("#d3-map"),
     width = +svg.attr("width"),
     height = +svg.attr("height");
 
+//svg.append('defs').html('<linearGradient id="opacity_gradient"><stop offset="0%" style="stop-color: #fff; stop-opacity: 0"/><stop offset="3%" style="stop-color: #fff; stop-opacity: 1"/><stop offset="100%" style="stop-color: #fff; stop-opacity: 1"/></linearGradient>'); 
+
 // Map and projection
 var path = d3.geoPath();
 var projection = d3.geoMercator()
     .scale(600)
-    .center([15,50])
+    .center([13,50])
     .translate([width / 2, height / 2]);
 
 // Data and color scale
 var colours = ['rgb(233,233,233)', '#70ad47', '#c6e0b4', '#ffc000', '#ffe699'];
 
 function ready() {
+    var fadeDuration = 300;
+
     var mouseOver = function(d) {
         if (!(d.properties.name in revRightsData.countries))
             return;
@@ -6022,11 +6028,11 @@ function ready() {
 
         d3.selectAll(".Country")
             .transition()
-            .duration(200)
+            .duration(fadeDuration)
             .style("opacity", .6)
         d3.select(this)
             .transition()
-            .duration(200)
+            .duration(fadeDuration)
             .style("opacity", 1)
             .style("stroke", "black")
     }
@@ -6037,11 +6043,11 @@ function ready() {
 
         d3.selectAll(".Country")
             .transition()
-            .duration(200)
+            .duration(fadeDuration)
             .style("opacity", 1)
         d3.select(this)
             .transition()
-            .duration(200)
+            .duration(fadeDuration)
             .style("opacity", 1)
             .style("stroke", "rgb(139, 139, 139)")
     }
@@ -6060,6 +6066,13 @@ function ready() {
         .data(europeGeojson.features)
         .enter()
         .append("path");
+
+//    svg.append('rect')
+//        .attr('x', width * .65)
+//        .attr('y', 0)
+//        .attr('width', width * .35)
+//        .attr('height', height)
+//        .style('fill', 'url(#opacity_gradient)');
 
     // draw each country
     countryPaths
@@ -6100,11 +6113,14 @@ function ready() {
 	.attr('class', 'caret')
         .text(d => capitalizeFirstLetter(d.section))
 	.on('click', function(d) {
+            var isDown = d3.select(this).classed('caret-down');
 	    d3.selectAll('.caret-down').classed('caret-down', false);
 	    d3.selectAll('.rr-option-ul.active').classed('active', false);
-	    var ul = d3.select(this.parentNode).select('.rr-option-ul');
-	    ul.classed('active', !ul.classed('active'));
-            d3.select(this).classed('caret-down', !d3.select(this).classed('caret-down'));
+            if (!isDown) {
+                var ul = d3.select(this.parentNode).select('.rr-option-ul');
+                ul.classed('active', true);
+                d3.select(this).classed('caret-down', true);
+            }
 	});
 
     categories
@@ -6142,7 +6158,7 @@ document.addEventListener("DOMContentLoaded", function(e) {
 <!-- Load custom styles for map and map helper -->
 <style type="text/css">
     html {
-        scroll-behavior: smooth;
+        font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
     }
     .tooltip {
         background: white;
@@ -6165,10 +6181,19 @@ document.addEventListener("DOMContentLoaded", function(e) {
     }
 
     ul.rr-category-ul {
+      width: 800px;
       font-weight: bold;
       list-style-type: none;
       font-size: 1.2em;
-      color: #111;
+      color: #444;
+      border-bottom: 1px solid #eee;
+      padding: 0;
+    }
+
+    li.rr-category {
+        border-top: 1px solid #eee;
+        padding: 5px;
+        padding-left: 15px;
     }
 
     ul.rr-option-ul {
@@ -6176,16 +6201,19 @@ document.addEventListener("DOMContentLoaded", function(e) {
       list-style-type: none;
       display: none;
       margin-left: 1.5em;
+      margin-top: 4px;
       padding-left: 0;
     }
 
     .rr-option {
       font-size: .9em;
-      color: #333;
+      color: #444;
+      padding-top: 3px;
+      padding-bottom: 3px;
     }
 
     .rr-option:hover {
-      color: #338;
+      color: black;
     }
 
     li.active-option {
@@ -6198,41 +6226,58 @@ document.addEventListener("DOMContentLoaded", function(e) {
     }
 
     .caret:hover {
-      color: #338;
+      color: black;
     }
 
     .caret::before {
-      content: "\25B8";
-      color: black;
+      content: "+";
+      color: #444;
       display: inline-block;
       margin-right: 6px;
     }
 
     .caret-down::before {
-      transform: rotate(90deg);
+      transform: rotate(45deg);
     }
 
     ul.active {
       display: block;
     } 
 
+    #map-div {
+      position: relative;
+      height: 480px;
+    }
+
+    #d3-map {
+      position: absolute;
+      top: 0;
+    }
+
     table {
-      font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
       border-collapse: collapse;
-      width: 100%;
-      font-size: .8em;
+      font-size: .92em;
       margin-bottom: 180px;
       table-layout: fixed;
+      border: 4px solid white;
     }
     
     table.legend-table {
-        margin-bottom: 20px;
-        width: auto;
+      background-color: #f4f4f4;
+      position: absolute;
+      top: 0;
+      left: 520px;
+      margin-bottom: 20px;
+      width: 280px;
     }
     
+    table.legend-table tr {
+      height: 55px;
+    }
+
     table.legend-table td {
         min-width: 20px;
-        border: 1px solid white;
+        border: 2px solid white;
     }
     
     table td, table th {
@@ -6243,6 +6288,7 @@ document.addEventListener("DOMContentLoaded", function(e) {
     
     table td.xls-style-19 {
       /* green */
+      width: 20px;
       background-color: #70ad47;
     }
     
