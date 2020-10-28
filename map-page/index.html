@@ -6005,12 +6005,13 @@ function ready() {
         if (d.properties.name in revRightsData.countries &&
                 rrSelectedOption in revRightsData.countries[d.properties.name]) {
             pData = revRightsData.countries[d.properties.name][rrSelectedOption].comment;
-            console.log(pData);
         }
         var p = d3.select("#countryComment").selectAll('p')
             .data(pData);
-        p.enter().append('p')
-            .text(d => d);
+        console.log(p.size());
+        p.enter().append('p').html(d => d);
+        console.log(p.size(), pData);
+        p.html(d => d);
         p.exit().remove();
 
         d3.select(this)
