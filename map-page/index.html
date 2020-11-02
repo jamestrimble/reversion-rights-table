@@ -4,21 +4,42 @@
 	<head>
 		<meta charset="utf-8"/>
 		<title></title>
-		<link href="style.css" rel="stylesheet"/>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	</head>
 	<body>
 
 <!-- wp:html -->
 <div id="map-div">
-    <svg id="d3-map" width="600" height="460"></svg>
+    <svg id="d3-map" width="750" height="460"></svg>
+    <div id="legend-div">
     <table class="legend-table">
-    <tr><td class="xls-style-19"></td><td>Currently binding provision</td>
-    <tr><td class="xls-style-21"></td><td>Currently binding provision, concerns only certain types of agreements</td>
-    <tr><td class="xls-style-22"></td><td>Historical provision</td>
-    <tr><td class="xls-style-23"></td><td>Historical provision, concerns only certain types of agreements</td>
-    <tr><td class="xls-style-0"></td><td>No provision</td>
+    <tr><td>
+      <svg height="16" width="16">
+        <circle cx="8" cy="8" r="8" class="xls-style-19"/>
+      </svg>
+    </td><td>Currently binding provision</td>
+    <tr><td>
+      <svg height="16" width="16">
+        <circle cx="8" cy="8" r="8" class="xls-style-21"/>
+      </svg>
+    </td><td>Currently binding provision, concerns only certain types of agreements</td>
+    <tr><td>
+      <svg height="16" width="16">
+        <circle cx="8" cy="8" r="8" class="xls-style-22"/>
+      </svg>
+    </td><td>Historical provision</td>
+    <tr><td>
+      <svg height="16" width="16">
+        <circle cx="8" cy="8" r="8" class="xls-style-23"/>
+      </svg>
+    </td><td>Historical provision, concerns only certain types of agreements</td>
+    <tr><td>
+      <svg height="16" width="16">
+        <circle cx="8" cy="8" r="8" class="xls-style-0"/>
+      </svg>
+    </td><td>No provision</td>
     </table>
+    </div>
 </div>
 <div id="d3-options"></div>
 <!-- /wp:html -->
@@ -5993,22 +6014,22 @@ var svg = d3.select("#d3-map"),
 var path = d3.geoPath();
 var projection = d3.geoMercator()
     .scale(600)
-    .center([13,50])
+    .center([19,50])
     .translate([width / 2, height / 2]);
 
 // Data and color scale
 var colours = ['rgb(233,233,233)', '#70ad47', '#c6e0b4', '#ffc000', '#ffe699'];
 
 function ready() {
-    var fadeDuration = 300;
+    var fadeDuration = 250;
+    var countryStrokeColour = "#8b8b8b";
 
     var mouseOver = function(d) {
         if (!(d.properties.name in revRightsData.countries))
             return;
         d3.select("#countryTooltip").html(d.properties.name)
         var pData = [];
-        if (d.properties.name in revRightsData.countries &&
-                rrSelectedOption in revRightsData.countries[d.properties.name]) {
+        if (rrSelectedOption in revRightsData.countries[d.properties.name]) {
             pData = revRightsData.countries[d.properties.name][rrSelectedOption].comment;
         }
         var p = d3.select("#countryComment").selectAll('p')
@@ -6021,9 +6042,12 @@ function ready() {
             .style("cursor", "pointer");
 
         d3.selectAll(".Country")
-//            .style("opacity", .8)
-            .style("stroke", "rgb(139, 139, 139)")
+            .style("stroke", countryStrokeColour);
 
+        if (!(rrSelectedOption in revRightsData.countries[d.properties.name]) ||
+                revRightsData.countries[d.properties.name][rrSelectedOption].status==0) {
+            return;
+        }
         d3.selectAll(".Country")
             .transition()
             .duration(fadeDuration)
@@ -6039,6 +6063,10 @@ function ready() {
         if (!(d.properties.name in revRightsData.countries))
             return;
 
+        if (!(rrSelectedOption in revRightsData.countries[d.properties.name]) ||
+                revRightsData.countries[d.properties.name][rrSelectedOption].status==0) {
+            return;
+        }
         d3.selectAll(".Country")
             .transition()
             .duration(fadeDuration)
@@ -6047,7 +6075,7 @@ function ready() {
             .transition()
             .duration(fadeDuration)
             .style("opacity", 1)
-            .style("stroke", "rgb(139, 139, 139)")
+            .style("stroke", countryStrokeColour);
     }
 
     var tooltip = d3.select("body")
@@ -6070,18 +6098,13 @@ function ready() {
         .attr("d", d3.geoPath()
             .projection(projection)
         )
-//        // set the color of each country
-//        .attr("fill", d =>
-//            ((d.properties || {}).name || "") in revRightsData.countries ? "rgb(203,203,203)" : "white")
-        .style("stroke", "transparent")
         .attr("class", function(d){ return "Country" } )
         .style("cursor", function(d){
             if(!d.properties.name in revRightsData.countries) {
                 return "default"
             }
             return "initial" } )
-        .style("opacity", 1)
-        .style("stroke", "#8b8b8b")
+        .style("stroke", countryStrokeColour)
         .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+20)+"px");})
         .on("mouseover", function(d){if (((d.properties || {}).name || "") in revRightsData.countries) tooltip.style("visibility", "visible");})
         .on("mouseenter", mouseOver )
@@ -6188,12 +6211,12 @@ document.addEventListener("DOMContentLoaded", function(e) {
       list-style-type: none;
       font-size: 1.2em;
       color: #555;
-      border-bottom: 1px solid #eee;
+      border-bottom: 1px solid #d8d8d8;
       padding: 0;
     }
 
     li.rr-category {
-        border-top: 1px solid #eee;
+        border-top: 1px solid #d8d8d8;
         padding: 5px;
         padding-left: 15px;
     }
@@ -6202,12 +6225,13 @@ document.addEventListener("DOMContentLoaded", function(e) {
       font-weight: normal;
       list-style-type: none;
       display: none;
-      margin-left: 1.5em;
       margin-top: 4px;
       padding-left: 0;
     }
 
     .rr-option {
+      margin-left: 1.1em;
+      padding-left: .4em;
       font-size: .9em;
       color: #555;
       padding-top: 3px;
@@ -6215,16 +6239,17 @@ document.addEventListener("DOMContentLoaded", function(e) {
     }
 
     .rr-option:hover {
-      color: black;
+      background: #f0f0f0;
     }
 
-    li.active-option {
-      font-weight: bold;
+    li.active-option, li.active-option:hover {
       color: black;
+      background: #d8d8d8;
     }
 
     .caret, .rr-option {
       cursor: pointer;
+      user-select: none;
     }
 
     .caret:hover {
@@ -6256,62 +6281,62 @@ document.addEventListener("DOMContentLoaded", function(e) {
       top: 0;
     }
 
-    table {
-      border-collapse: collapse;
-      font-size: .92em;
-      margin-bottom: 180px;
-      table-layout: fixed;
-      border: 4px solid white;
-    }
-    
-    table.legend-table {
-      background-color: #f4f4f4;
+    #legend-div {
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      padding: 3px;
+      background: white;
+      box-shadow: 0 1px 7px rgba(0, 0, 0, 0.2);
       position: absolute;
       top: 0;
-      left: 520px;
-      margin-bottom: 20px;
-      width: 280px;
+      left: 545px;
     }
-    
-    table.legend-table tr {
-      height: 55px;
+
+    table.legend-table {
+      border-collapse: collapse;
+      font-size: .92em;
+      background-color: white;
+      width: 240px;
+      margin: 0;
+      margin-right: 5px;
     }
 
     table.legend-table td {
-        min-width: 20px;
-        border: 2px solid white;
+        vertical-align: middle;
+        padding-left: 1px;
+        padding-right: 1px;
+        padding-top: 4px;
+        padding-bottom: 4px;
     }
     
-    table td, table th {
-      border: 1px solid rgba(127,127,127,.24);
-      padding: 3px;
-      background-clip: padding-box;
+    table svg {
+        margin-top: 4px;
+        padding: 3px;
     }
     
-    table td.xls-style-19 {
+    .xls-style-19 {
       /* green */
-      width: 20px;
-      background-color: #70ad47;
+      fill: #70ad47;
     }
     
-    table td.xls-style-21 {
+    .xls-style-21 {
       /* light green */
-      background-color: #c6e0b4;
+      fill: #c6e0b4;
     }
     
-    table td.xls-style-22 {
+    .xls-style-22 {
       /* yellow */
-      background-color: #ffc000;
+      fill: #ffc000;
     }
     
-    table td.xls-style-23 {
+    .xls-style-23 {
       /* light yellow */
-      background-color: #ffe699;
+      fill: #ffe699;
     }
     
-    table td.xls-style-0 {
+    .xls-style-0 {
       /* grey */
-      background-color: rgba(233,233,233);
+      fill: rgba(233,233,233);
     }
 </style>
 <!-- /wp:html -->
