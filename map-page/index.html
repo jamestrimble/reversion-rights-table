@@ -6170,6 +6170,8 @@ function ready() {
     options
         .filter(function(d) {return d.full_name=='general: non-use or insufficient use'})
         .each(showChosenOption);
+
+    d3.select('#legend-div').style('visibility', 'visible');
 }
 
 document.addEventListener("DOMContentLoaded", function(e) {
@@ -6282,6 +6284,7 @@ document.addEventListener("DOMContentLoaded", function(e) {
     }
 
     #legend-div {
+      visibility: hidden;
       border: 1px solid #ccc;
       border-radius: 3px;
       padding: 3px;
