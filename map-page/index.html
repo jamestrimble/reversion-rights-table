@@ -11,7 +11,7 @@
 <!-- wp:html -->
 <div id="map-div">
     <svg id="d3-map" width="750" height="460"></svg>
-    <div id="legend-div">
+    <div id="legend-div" style="visibility: hidden">
     <table class="legend-table">
     <tr><td>
       <svg height="16" width="16">
@@ -6246,6 +6246,7 @@ document.addEventListener("DOMContentLoaded", function(e) {
       color: #555;
       padding-top: 3px;
       padding-bottom: 3px;
+      border-radius: 8px;
     }
 
     .rr-option:hover {
@@ -6293,7 +6294,6 @@ document.addEventListener("DOMContentLoaded", function(e) {
     }
 
     #legend-div {
-      visibility: hidden;
       border: 1px solid #ccc;
       border-radius: 3px;
       padding: 3px;
